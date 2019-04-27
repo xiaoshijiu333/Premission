@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="fei.mapper.EmployeeMapper">
+
+    <!--将POJO实体类与数据库表映射对应-->
+    <resultMap id="employeeMap" type="Employee">
+        <!--主键映射-->
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="inputtime" property="inputtime"></result>
+        <result column="telphone" property="telphone"></result>
+        <result column="email" property="email"></result>
+        <result column="state" property="state"></result>
+        <result column="admin" property="admin"></result>
+        <!--员工对应的部门-->
+        <association property="department" javaType="Department">
+            <id column="id" property="id"></id>
+            <result column="name" property="name"></result>
+        </association>
+    </resultMap>
+
+    <!--插入员工-->
+    <insert id="saveEmployee">
+        insert into `employee` (username,password,inputtime,telphone,email,state,admin,depart_id)
+        values (#{username},#{password},#{inputtime},#{telphone},#{email},#{state},#{admin},#{department.id})
+    </insert>
+
+    <!--左连接查询所有员工以及他的部门-->
+    <select id="employeeList" resultMap="employeeMap">
+        select e.id,e.username,e.inputtime,e.telphone,e.email,e.state,e.admin,d.id,d.name
+        from `employee` as e left join `department` as d on e.depart_id = d.id
+    </select>
+
+    <select id="getEmployeeByUserName" resultType="fei.model.Employee">
+        select * from `employee` where username = #{username}
+    </select>
+</mapper>
