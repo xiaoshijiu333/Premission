@@ -44,4 +44,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee getEmployeeByUserName(String username) {
         return employeeMapper.getEmployeeByUserName(username);
     }
+
+
+    /**
+     * @function: 根据角色获取用户的权限
+     */
+    @Override
+    public List<String> getEmployeePremission(List<String> roles) {
+        return employeeMapper.getEmployeePremission(roles);
+    }
+
+    /**
+     * @function: 根据用户id获取用户的角色
+     */
+    @Override
+    public List<String> getEmployeeRoles(Long id) {
+        return employeeMapper.getEmployeeRoles(id);
+    }
 }

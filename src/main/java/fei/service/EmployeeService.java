@@ -25,4 +25,14 @@ public interface EmployeeService {
      * @function: 根据用户名查找员工
      */
     Employee getEmployeeByUserName(String username);
+
+    /**
+     * @function: 根据角色获取用户的权限
+     */
+    List<String> getEmployeePremission(List<String> roles);
+
+    /**
+     * @function: 根据用户id获取用户的角色
+     */
+    List<String> getEmployeeRoles(Long id);
 }

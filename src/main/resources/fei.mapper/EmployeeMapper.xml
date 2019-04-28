@@ -35,4 +35,20 @@
     <select id="getEmployeeByUserName" resultType="fei.model.Employee">
         select * from `employee` where username = #{username}
     </select>
+
+    <!--根据id查找用户的角色-->
+    <select id="getEmployeeRoles" resultType="java.lang.String">
+        select r.role_name from `employee` as e left join `employee_role` as el on e.id = el.em_id
+        left join `role` as r on r.role_id = el.role_id where e.id = #{id}
+    </select>
+
+    <!--根据角色名查找用户的权限-->
+    <select id="getEmployeePremission" resultType="java.lang.String">
+        select distinct p.pre_name from `role` as r left join `role_premission` as rp on r.role_id = rp.role_id
+        left join `premission` as p on rp.role_id = p.pre_id where r.role_name in
+        <foreach collection="list" open="(" close=")" separator="," item="rolename">
+            #{rolename}
+        </foreach>
+    </select>
+
 </mapper>

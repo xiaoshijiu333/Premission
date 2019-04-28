@@ -1,16 +1,20 @@
 package fei.web.shiro.realm;
 
 import fei.model.Employee;
+import fei.model.NotAdminException;
 import fei.service.EmployeeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @author xiaoshijiu
@@ -40,8 +44,12 @@ public class EmployeeRealm extends AuthorizingRealm {
         Employee employee = employeeService.getEmployeeByUserName(username);
 
         //没有查询到或者不是管理员，直接返回null
-        if (employee == null || employee.getAdmin() == false) {
+        if (employee == null) {
             return null;
+        }
+
+        if (employee.getAdmin() == false){
+            throw  new NotAdminException("你不是管理员，不能访问");
         }
 
         //定义加密的盐值，是ByteSource类型
@@ -71,10 +79,43 @@ public class EmployeeRealm extends AuthorizingRealm {
 
     /**
      * @function: 授权
+     * 数据库查询当前认证的用户的权限
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        return null;
+
+        LOG.warn("参数对象是：" + principalCollection.toString());
+
+        Employee employee = (Employee) principalCollection.getPrimaryPrincipal();
+
+        //数据库查询当前用户的角色
+        List<String> roles = employeeService.getEmployeeRoles(employee.getId());
+
+        if (roles == null || roles.size() == 0) {
+            return null;
+        }
+
+        LOG.info("当前用户的角色为");
+        roles.stream().forEach(System.out::println);
+
+        //数据库查询当前用户的权限
+        List<String> premissions=employeeService.getEmployeePremission(roles);
+
+        if (premissions == null || premissions.size() == 0) {
+            return null;
+        }
+
+        LOG.info("当前用户的权限为");
+        premissions.stream().forEach(System.out::println);
+
+        /**
+         * @function: 权限信息
+         */
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        info.addRoles(roles);
+        info.addStringPermissions(premissions);
+
+        return info;
     }
 
 

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd">
+	    http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <!--shiro核心过滤器-->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
@@ -30,7 +33,9 @@
                 /static/js/** = anon
                 /static/login.html = anon
                 /login = anon   <!--登录请求不拦截-->
-                /** = authc     <!--除指定请求外,其它所有的请求都需要身份验证-->
+                <!--/saveEmployee = perms["create"]-->
+                /** = authc     <!--除指定请求外,其它所有的请求都需要身份验证，要放在后面-->
+                <!--上面的方法不走自定义realm中，需要自定义过滤器-->
             </value>
         </property>
     </bean>
@@ -39,7 +44,18 @@
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!--注入realm-->
         <property name="realm" ref="employeeRealm"/>
+        <!--&lt;!&ndash;注入授权管理器&ndash;&gt;-->
+        <!--<property name="authorizer" ref="authorizer"/>-->
     </bean>
+
+    <!--&lt;!&ndash;授权管理器&ndash;&gt;-->
+    <!--<bean class="org.apache.shiro.authz.ModularRealmAuthorizer" id="authorizer">-->
+    <!--<property name="realms">-->
+    <!--<list>-->
+    <!--<ref bean="employeeRealm"></ref>-->
+    <!--</list>-->
+    <!--</property>-->
+    <!--</bean>-->
 
     <!--自定义Realm-->
     <bean class="fei.web.shiro.realm.EmployeeRealm" id="employeeRealm">
@@ -53,5 +69,13 @@
         <property name="hashAlgorithmName" value="MD5"/>
         <!--加密次数-->
         <property name="hashIterations" value="3"/>
+    </bean>
+
+    <!--配置授权注解-->
+    <!--配置为true表示即使用cglib代理的方式-->
+    <aop:config proxy-target-class="true"/>
+    <!--配置第三方扫描shiro注解-->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
     </bean>
 </beans>

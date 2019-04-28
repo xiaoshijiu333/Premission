@@ -1,6 +1,7 @@
 package fei.web;
 
 import fei.model.Employee;
+import fei.model.NotAdminException;
 import fei.model.ResultMessage;
 import fei.web.shiro.realm.EmployeeRealm;
 import fei.web.shiro.token.TokenManager;
@@ -38,7 +39,13 @@ public class LoginController {
             message.setResultMes("账户不存在");
             LOG.warn("账户不存在");
             return message;
-        }catch (IncorrectCredentialsException e){
+        }catch (NotAdminException e){
+            message.setResultCode(200);
+            message.setResultMes(e.getMessage());
+            LOG.warn(e.getMessage());
+            return message;
+        }
+        catch (IncorrectCredentialsException e){
             message.setResultCode(200);
             message.setResultMes("密码错误");
             LOG.warn("密码错误");
