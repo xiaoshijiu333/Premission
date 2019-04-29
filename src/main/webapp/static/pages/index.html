@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Management</title>
+    <link rel="stylesheet" type="text/css" href="../easyui/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/uimaker/icon.css">
+    <script type="text/javascript" src="../easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="../js/index.js"></script>
+</head>
+<body class="easyui-layout">
+<!--顶部-->
+<div data-options="region:'north'" style="height:100px; background: #ec4e00; padding: 20px 20px">
+    <img src="../images/main_logo.png" alt="">
+</div>
+<!--底部-->
+<div data-options="region:'south'" style="height:50px; border-bottom: 3px solid #ec4e00">
+    <p style="font-size: 15px;text-align: center">小诗酒权限管理系统—版权所有</p>
+</div>
+<!--左边菜单-->
+<div data-options="region:'west',split:true" style="width:250px;">
+
+    <div id="aa" class="easyui-accordion" data-options="fit:true">
+        <div title="菜单" data-options="iconCls:'icon-save',selected:true">
+            <!--菜单树结构-->
+            <ul id="tree"></ul>
+        </div>
+        <div title="个人" data-options="iconCls:'icon-reload'">
+            content2
+        </div>
+        <div title="公告" data-options="iconCls:'icon-ok'">
+            content3
+        </div>
+    </div>
+</div>
+<!--中心功能区-->
+<div data-options="region:'center'" style="padding:5px;background:#eee;">
+    <div id="tabs"></div>
+</div>
+</body>
+</html>
